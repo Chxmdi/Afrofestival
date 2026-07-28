@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { DynamicForm, type FieldDef, type FormValues } from '@/components/Form';
 import { PublicShell, SuccessScreen, submitPublic } from './PublicForms';
-import { EVENT } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { Honeypot, useHoneypot } from './Honeypot';
 
 const FIELDS: FieldDef[] = [
@@ -16,6 +16,7 @@ const FIELDS: FieldDef[] = [
 ];
 
 export function TeamRegistration() {
+  const { config: EVENT } = useEventConfig();
   const [done, setDone] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);

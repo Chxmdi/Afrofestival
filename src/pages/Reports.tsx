@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Printer, Download, FileBarChart, ArrowLeft } from 'lucide-react';
 import { useRows } from '@/lib/hooks';
 import { useDashboard } from '@/lib/dashboard';
-import { EVENT } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { money, compactMoney, formatDate, formatDateTime, titleCase, downloadCSV, percent } from '@/lib/format';
 import { Card, SectionTitle, Spinner, EmptyState } from '@/components/ui';
 
@@ -21,6 +21,7 @@ const REPORTS: ReportDef[] = [
 ];
 
 function ReportShell({ title, onBack, rows, csvName, children }: { title: string; onBack: () => void; rows?: Record<string, unknown>[]; csvName: string; children: React.ReactNode }) {
+  const { config: EVENT } = useEventConfig();
   return (
     <div className="space-y-4">
       <div className="no-print flex items-center justify-between">
@@ -53,8 +54,9 @@ function Table({ headers, rows }: { headers: string[]; rows: (string | number)[]
 }
 
 export function Reports() {
+  const { config } = useEventConfig();
   const [active, setActive] = useState<string | null>(null);
-  const { data: dash } = useDashboard();
+  const { data: dash } = useDashboard(config);
   const { data: sponsors = [] } = useRows<Record<string, unknown>>('sponsor_prospects', { order: { column: 'weighted_value', ascending: false } });
   const { data: vendors = [] } = useRows<Record<string, unknown>>('vendors');
   const { data: budgetItems = [] } = useRows<Record<string, unknown>>('budget_items');

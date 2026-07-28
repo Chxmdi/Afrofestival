@@ -127,6 +127,16 @@ App shell: collapsible desktop sidebar, mobile navigation, global search + comma
 
 ---
 
+## Editable event configuration
+
+Nothing about the event is hard-coded. **Settings → Event configuration** (Owner/Admin or Event Director) edits, live:
+
+- **Event** — name, tagline, location, timezone, currency, provisional & backup dates, capacity target
+- **Tournament format** — number of teams, groups, players per team (min/max), pitches, slot length
+- **Finance** — working budget, sponsorship cash & in-kind goals, **max player fee**, **max ticket price**
+
+Values are stored in the `events` and `event_settings` tables and read through an `EventConfigProvider`, so the dashboard, tournament, finance and public forms update immediately. The **max player fee is enforced by a database trigger** (`enforce_player_fee_cap`) that reads the configured limit — change it in Settings and the database honours the new ceiling (lowering it rejects any player priced above it). The event details and tournament format are readable by the public application forms; finance settings stay staff-only.
+
 ## Sample vs. real data
 
 All seeded records carry `is_sample = true` and render a **SAMPLE** badge so demonstration data is never confused with live operational records. Seeded compliance items are planning placeholders and are labelled **needs verification** until confirmed with the relevant authorities.

@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { Plus, Handshake, Store, Trophy, ListChecks, Receipt, FileText } from 'lucide-react';
 import { useInsert } from '@/lib/hooks';
-import { EVENT, SPONSOR_STAGES, TASK_STATUSES, PRIORITIES, VENDOR_CATEGORIES } from '@/lib/constants';
+import { SPONSOR_STAGES, TASK_STATUSES, PRIORITIES, VENDOR_CATEGORIES } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { Modal } from '@/components/Modal';
 import { DynamicForm, type FieldDef, type FormValues } from '@/components/Form';
 import { Popover } from './Popover';
@@ -92,6 +93,7 @@ const MENU: { kind: Kind; label: string; icon: typeof Plus; category: string[] }
 ];
 
 export function QuickAdd() {
+  const { config: EVENT } = useEventConfig();
   const [kind, setKind] = useState<Kind | null>(null);
   const [error, setError] = useState<string | null>(null);
   const insert = useInsert(kind ? CONFIG[kind].table : 'tasks');

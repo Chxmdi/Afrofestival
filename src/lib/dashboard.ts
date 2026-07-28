@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from './supabase';
 import { isSupabaseConfigured } from './env';
-import { EVENT } from './constants';
 import { daysUntil } from './format';
+import type { EventConfig } from './eventConfig';
 
 async function rows<T = Record<string, unknown>>(table: string, select = '*'): Promise<T[]> {
   const { data, error } = await supabase.from(table).select(select);
@@ -31,9 +31,9 @@ export interface DashboardData {
   attendance: { target: number; forecast: number };
 }
 
-export function useDashboard() {
+export function useDashboard(cfg: EventConfig) {
   return useQuery<DashboardData>({
-    queryKey: ['dashboard'],
+    queryKey: ['dashboard', cfg.eventId, cfg.sponsorCashGoal, cfg.teams, cfg.workingBudget, cfg.capacityTarget],
     enabled: isSupabaseConfigured,
     queryFn: async () => {
       const [
@@ -115,8 +115,8 @@ export function useDashboard() {
       // Readiness — weighted composite of key signals (0-100)
       const clamp = (n: number) => Math.max(0, Math.min(1, n));
       const readiness = Math.round(100 * (
-        0.25 * clamp(securedCash / (EVENT.sponsorCashGoal || 1)) +
-        0.20 * clamp(teamsApproved / EVENT.teams) +
+        0.25 * clamp(securedCash / (cfg.sponsorCashGoal || 1)) +
+        0.20 * clamp(teamsApproved / cfg.teams) +
         0.15 * clamp((approved) / Math.max(1, vendors.length)) +
         0.15 * clamp((tasks.length - overdue - blocked) / Math.max(1, tasks.length)) +
         0.10 * clamp(1 - outstandingWaivers / Math.max(1, players.length)) +
@@ -125,25 +125,25 @@ export function useDashboard() {
       ));
 
       return {
-        daysUntil: daysUntil(EVENT.provisionalDate),
+        daysUntil: daysUntil(cfg.provisionalDate),
         readiness,
-        budget: { planned, committed, paid, forecast, variance, remaining: (EVENT.workingBudget || planned) - paid },
+        budget: { planned, committed, paid, forecast, variance, remaining: (cfg.workingBudget || planned) - paid },
         sponsors: {
-          cashGoal: EVENT.sponsorCashGoal, inkindGoal: EVENT.sponsorInkindGoal,
+          cashGoal: cfg.sponsorCashGoal, inkindGoal: cfg.sponsorInkindGoal,
           securedCash, securedInkind, weightedPipeline, outstandingInvoices, byStage,
           funnelValue: sum(sponsors.map((s) => Number(s.suggested_ask ?? 0))),
         },
         vendors: { applications: vendorApps.length, approved, missingDocs: missingDocVendors.size, byCategory },
         tournament: {
-          teams: teamsApproved, teamsMax: EVENT.teams, players: players.length,
+          teams: teamsApproved, teamsMax: cfg.teams, players: players.length,
           outstandingWaivers, fixtures: fixtures.length,
-          regProgress: Math.round((teamsApproved / EVENT.teams) * 100),
+          regProgress: Math.round((teamsApproved / cfg.teams) * 100),
         },
         tasks: { dueThisWeek, overdue, blocked, byStatus, total: tasks.length },
         milestones: { atRisk: milestones.filter((m) => ['at_risk', 'missed'].includes(m.status)).length },
         permits: { byStatus: permitStatus, total: permits.length },
         volunteers: { recruited, assigned: assignedIds.size, uncoveredShifts },
-        attendance: { target: EVENT.capacityTarget, forecast: Math.round(EVENT.capacityTarget * 0.72) },
+        attendance: { target: cfg.capacityTarget, forecast: Math.round(cfg.capacityTarget * 0.72) },
       };
     },
   });

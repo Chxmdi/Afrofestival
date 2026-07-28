@@ -5,7 +5,8 @@ import {
 } from 'recharts';
 import { Plus, Search, Download, LayoutGrid, Table2, PieChart } from 'lucide-react';
 import { useRows, useInsert, useUpdate } from '@/lib/hooks';
-import { SPONSOR_STAGES, SPONSOR_STAGE_MAP, EVENT } from '@/lib/constants';
+import { SPONSOR_STAGES, SPONSOR_STAGE_MAP } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { money, compactMoney, percent, downloadCSV, formatDate } from '@/lib/format';
 import type { SponsorProspect } from '@/types/db';
 import { Card, SectionTitle, Spinner, ErrorState, EmptyState, Badge, Meter, StatCard, Progress } from '@/components/ui';
@@ -34,6 +35,7 @@ type Tab = 'pipeline' | 'table' | 'analytics';
 
 export function Sponsors() {
   const navigate = useNavigate();
+  const { config: EVENT } = useEventConfig();
   const { canEdit } = useAuth();
   const { data = [], isLoading, error, refetch } = useRows<SponsorProspect>('sponsor_prospects', { order: { column: 'match_score', ascending: false } });
   const insert = useInsert('sponsor_prospects');

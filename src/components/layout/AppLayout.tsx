@@ -6,7 +6,8 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/auth/AuthProvider';
 import { visibleNav, NAV_GROUPS } from '@/lib/nav';
-import { ROLE_LABELS, EVENT } from '@/lib/constants';
+import { ROLE_LABELS } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { Avatar } from '@/components/ui';
 import { CommandPalette } from './CommandPalette';
 import { NotificationCenter } from './NotificationCenter';
@@ -116,6 +117,7 @@ function UserMenu() {
 }
 
 export function AppLayout() {
+  const { config: EVENT } = useEventConfig();
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('sb-collapsed') === '1');
   const [mobileOpen, setMobileOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);

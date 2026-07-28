@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { isSupabaseConfigured } from '@/lib/env';
-import { EVENT } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { AlertTriangle } from 'lucide-react';
 
 export function Login() {
+  const { config: EVENT } = useEventConfig();
   const [mode, setMode] = useState<'signin' | 'signup'>('signin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

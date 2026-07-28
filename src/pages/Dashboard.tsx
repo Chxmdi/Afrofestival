@@ -8,8 +8,9 @@ import {
 } from 'lucide-react';
 import { useDashboard } from '@/lib/dashboard';
 import { useRows } from '@/lib/hooks';
-import { EVENT, SPONSOR_STAGES, TASK_STATUSES } from '@/lib/constants';
+import { SPONSOR_STAGES, TASK_STATUSES } from '@/lib/constants';
 import { money, compactMoney, formatDateTime, titleCase } from '@/lib/format';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { Card, StatCard, Progress, Spinner, ErrorState, EmptyState } from '@/components/ui';
 
 function Ring({ value }: { value: number }) {
@@ -47,7 +48,8 @@ function ChartCard({ title, children, hint }: { title: string; children: React.R
 
 export function Dashboard() {
   const navigate = useNavigate();
-  const { data: d, isLoading, error, refetch } = useDashboard();
+  const { config: EVENT } = useEventConfig();
+  const { data: d, isLoading, error, refetch } = useDashboard(EVENT);
   const { data: activity = [] } = useRows<{ id: string; action: string; summary: string | null; entity_type: string | null; created_at: string }>(
     'activity_logs', { order: { column: 'created_at', ascending: false }, limit: 8 },
   );

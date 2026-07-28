@@ -1,10 +1,11 @@
 import { Link, Outlet } from 'react-router-dom';
 import { Trophy, Store, Users, Handshake, Music, ArrowRight, CheckCircle2 } from 'lucide-react';
-import { EVENT } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { supabase } from '@/lib/supabase';
 import type { ReactNode } from 'react';
 
 export function PublicFormsLayout() {
+  const { config: EVENT } = useEventConfig();
   return (
     <div className="min-h-screen bg-ink-950 texture-grid">
       <header className="border-b border-ink-800 bg-ink-900/60 backdrop-blur">
@@ -39,6 +40,7 @@ const FORMS = [
 ];
 
 export function PublicIndex() {
+  const { config: EVENT } = useEventConfig();
   return (
     <div>
       <div className="text-center mb-8">

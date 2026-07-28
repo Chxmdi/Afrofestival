@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import { BarChart, Bar, Cell, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
 import { Wallet, Plus, TrendingUp, Scale } from 'lucide-react';
 import { useRows, useInsert, useUpdate } from '@/lib/hooks';
-import { EVENT } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { money, compactMoney, titleCase } from '@/lib/format';
 import { Card, SectionTitle, Spinner, ErrorState, EmptyState, Badge, StatCard, Progress } from '@/components/ui';
 import { DataTable, type Column } from '@/components/DataTable';
@@ -35,6 +35,7 @@ const EXP_FIELDS: FieldDef[] = [
 const sum = (arr: number[]) => arr.reduce((a, b) => a + Number(b || 0), 0);
 
 export function Finance() {
+  const { config: EVENT } = useEventConfig();
   const { hasRole, isAdmin } = useAuth();
   const canEditFinance = isAdmin || hasRole(['finance_lead', 'event_director']);
   const [tab, setTab] = useState<'budget' | 'revenue' | 'expenses' | 'breakeven'>('budget');

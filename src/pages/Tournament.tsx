@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Trophy, Users, ClipboardList, Award, Shirt } from 'lucide-react';
 import { useRows, useInsert, useUpdate } from '@/lib/hooks';
-import { EVENT } from '@/lib/constants';
+import { useEventConfig } from '@/config/EventConfigProvider';
 import { money, titleCase, formatDateTime } from '@/lib/format';
 import { Card, SectionTitle, Spinner, ErrorState, EmptyState, Badge, StatCard, Progress } from '@/components/ui';
 import { DataTable, type Column } from '@/components/DataTable';
@@ -33,6 +33,7 @@ const TEAM_FIELDS: FieldDef[] = [
 type Tab = 'teams' | 'groups' | 'fixtures' | 'awards';
 
 export function Tournament() {
+  const { config: EVENT } = useEventConfig();
   const { canEdit } = useAuth();
   const [tab, setTab] = useState<Tab>('teams');
   const { data: teams = [], isLoading, error, refetch } = useRows<Team>('teams', { order: { column: 'name' } });
